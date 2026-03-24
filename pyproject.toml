@@ -1,0 +1,26 @@
+[project]
+name = "finetl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "glztl", email = "tianlunnn@gmail.com"}
+]
+keywords = ["finance", "etl", "quant", "data-cleaning", "pandas"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "pandas>=3.0.1",
+    "pydantic>=2.12.5",
+    "pytest>=9.0.2",
+    "rich>=14.3.3",
+]
