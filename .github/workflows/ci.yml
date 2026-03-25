@@ -19,8 +19,9 @@ jobs:
     # 使用 uv_setup 动作, 速度快且与本地一致
     - name: Set up uv
       uses: astral-sh/setup-uv@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: uv sync --dev
