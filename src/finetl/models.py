@@ -70,7 +70,7 @@ class ETLConfig(BaseModel):
         check_integrity = info.data.get('check_integrity', True)
 
         # 如果选择drop方法但数量要求很高
-        if v == "drop" and info.data.get("min_rows", "10") > 50:
+        if v == "drop" and info.data.get("min_rows", 10) > 50:
             import warnings
             warnings.warn(
                 f"使用 method='drop' 可能会删除大量数据，导致行数低于 min_rows={info.data.get('min_rows, 10')}",
