@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from typing import Optional, Literal
 from datetime import datetime
 
@@ -36,10 +36,46 @@ class ETLConfig(BaseModel):
     # 自定义验证器: 如果 check_integrity 为 False, 则 min_rows 必须为 1
     @field_validator('min_rows')
     @classmethod
-    def validate_min_rows(cls, v, info):
-        if info.data.get("check_integrity") is False and v > 1:
-            # 示例逻辑，根据实际需求调整
-            pass
+    def validate_min_rows(cls, v: int, info: ValidationInfo) -> int:
+        """
+        验证: min_rows 的合理性
+        规则: 如果 check_integrity=False, min_rows 可以更小, 但必须有警告
+        """
+        # 获取其他字段的值 
+        check_integrity = info.data.get('check_integrity', True)
+
+        # 如果不检查完整性但要求最小行数 > 100, 给出警告
+        if not check_integrity and v > 100:
+            # Pydantic中抛出 ValueError 会阻止验证通过
+            # 选择允许但记录日志
+            import warnings
+            warnings.warn(
+                f"check_integrity=False 但 min_rows={v}, 建议降低 min_rows 或启用完整性检查",
+                UserWarning
+            )
+
+        # 必须至少为 1
+        if v < 1:
+            raise ValueError("min_rows 必须至少为1")
+
+        return v
+    
+    # 验证 method 和 check_integrity 的组合
+    @field_validator('method')
+    @classmethod
+    def validate_method_with_integrity(cls, v, info):
+        """
+        验证清洗方法与完整性检查的组合是否合理
+        """
+        check_integrity = info.data.get('check_integrity', True)
+
+        # 如果选择drop方法但数量要求很高
+        if v == "drop" and info.data.get("min_rows", "10") > 50:
+            import warnings
+            warnings.warn(
+                f"使用 method='drop' 可能会删除大量数据，导致行数低于 min_rows={info.data.get('min_rows, 10')}",
+                UserWarning
+            )
         return v
 
 class StockSchema(BaseModel):
@@ -56,3 +92,4 @@ class StockSchema(BaseModel):
         default=["Open", "High", "Low", "Close", "Volume"],
         description="必须为数值型的列"
     )
+
