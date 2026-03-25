@@ -24,3 +24,13 @@ dependencies = [
     "pytest>=9.0.2",
     "rich>=14.3.3",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "build>=1.4.1",
+    "pytest-cov>=7.1.0",
+]
